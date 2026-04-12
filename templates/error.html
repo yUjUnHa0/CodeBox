@@ -1,0 +1,40 @@
+<!--
+错误页面：error.html
+功能：显示错误信息
+作者：大一学生助手
+创建时间：2026-04-10
+
+这个页面用于显示各种错误信息，如权限不足、资源不存在等。
+-->
+
+{% extends "base.html" %}
+
+{% block title %}错误{% endblock %}
+
+{% block content %}
+<div class="card card-center">
+    <div style="text-align: center;">
+        <div class="error-code">❌</div>
+        <h2 class="error-title">错误</h2>
+    </div>
+
+    <div class="card-content">
+        <div class="message message-error mb-20">
+            {{ error_message }}
+        </div>
+
+        <p>抱歉，发生了错误。请检查以下内容：</p>
+        <ul style="margin-left: 20px; margin-bottom: 20px;">
+            <li>您是否已登录？</li>
+            <li>您是否有权限访问此资源？</li>
+            <li>资源是否已删除或不存在？</li>
+            <li>输入的数据是否正确？</li>
+        </ul>
+
+        <div class="flex-center">
+            <a href="{{ url_for('dashboard') }}" class="form-btn mr-10">返回仪表板</a>
+            <a href="{{ url_for('code_list') }}" class="form-btn">返回代码列表</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,145 @@
+<!--
+Gitee页面：gitee.html
+功能：Gitee配置和提交
+作者：大一学生助手
+创建时间：2026-04-10
+
+这个页面显示Gitee配置表单，用户可以配置访问令牌和仓库地址。
+这个功能在模块5完整实现。
+-->
+
+{% extends "base.html" %}
+
+{% block title %}Gitee提交{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2 class="card-title">Gitee一键提交</h2>
+    <div class="card-content">
+        <p>Gitee提交功能将在模块5实现。</p>
+        <p>这里将提供Gitee配置和代码/笔记一键提交功能。</p>
+    </div>
+</div>
+
+<div class="card">
+    <h2 class="card-title">功能预览</h2>
+    <div class="card-content">
+        <h3>计划实现的功能：</h3>
+        <ul>
+            <li>Gitee个人访问令牌配置</li>
+            <li>仓库选择和管理</li>
+            <li>代码一键提交到Gitee</li>
+            <li>笔记一键提交到Gitee</li>
+            <li>提交历史查看</li>
+        </ul>
+    </div>
+</div>
+
+<div class="card">
+    <h2 class="card-title">Gitee配置</h2>
+    <div class="card-content">
+        <!-- 配置状态消息 -->
+        <div id="gitee-config-message" class="message-hidden" style="display: none;">
+            <!-- 消息内容将通过JavaScript动态填充 -->
+        </div>
+
+        <!-- 配置表单 -->
+        <form id="gitee-config-form">
+            <div class="form-group">
+                <label class="form-label">Gitee个人访问令牌：</label>
+                <input type="password" class="form-input" id="gitee-access-token" name="access_token" placeholder="请输入Gitee个人访问令牌" required>
+                <small style="color: #666;">
+                    访问令牌需要在Gitee官网生成：<a href="https://gitee.com/profile/personal_access_tokens" target="_blank">生成令牌</a>
+                </small>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">仓库地址：</label>
+                <input type="text" class="form-input" id="gitee-repo-url" name="repo_url" placeholder="例如：https://gitee.com/用户名/仓库名" required>
+                <small style="color: #666;">请确保仓库已存在且有写入权限。</small>
+            </div>
+
+            <div class="form-group">
+                <button type="button" class="form-btn" id="save-gitee-config-btn">保存配置</button>
+                <button type="button" class="form-btn btn-secondary ml-10" id="test-gitee-connection-btn">测试连接</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="grid">
+    <div class="grid-item">
+        <h3>提交代码到Gitee</h3>
+        <p>将保存的代码片段提交到Gitee仓库。</p>
+        <div class="gitee-status" id="code-submit-status" style="display: none; margin-bottom: 10px;">
+            <!-- 代码提交状态将通过JavaScript动态填充 -->
+        </div>
+        <button class="grid-btn" id="submit-code-to-gitee-btn">一键提交代码</button>
+        <div class="gitee-progress" id="code-submit-progress" style="display: none; margin-top: 10px;">
+            <div class="progress-bar">
+                <div class="progress-fill" id="code-progress-fill" style="width: 0%;"></div>
+            </div>
+            <div class="progress-text" id="code-progress-text">0/0</div>
+        </div>
+    </div>
+
+    <div class="grid-item">
+        <h3>提交笔记到Gitee</h3>
+        <p>将保存的Markdown笔记提交到Gitee仓库。</p>
+        <div class="gitee-status" id="note-submit-status" style="display: none; margin-bottom: 10px;">
+            <!-- 笔记提交状态将通过JavaScript动态填充 -->
+        </div>
+        <button class="grid-btn" id="submit-note-to-gitee-btn">一键提交笔记</button>
+        <div class="gitee-progress" id="note-submit-progress" style="display: none; margin-top: 10px;">
+            <div class="progress-bar">
+                <div class="progress-fill" id="note-progress-fill" style="width: 0%;"></div>
+            </div>
+            <div class="progress-text" id="note-progress-text">0/0</div>
+        </div>
+    </div>
+
+    <div class="grid-item">
+        <h3>查看提交历史</h3>
+        <p>查看以往的提交记录。</p>
+        <button class="grid-btn" id="view-gitee-history-btn">查看历史</button>
+        <div class="gitee-history" id="gitee-history-container" style="display: none; margin-top: 15px;">
+            <!-- 历史记录将通过JavaScript动态填充 -->
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h2 class="card-title">提交历史</h2>
+    <div class="card-content">
+        <div id="gitee-history-full">
+            <p>点击"查看历史"按钮加载提交记录，或直接查看最近的提交：</p>
+            <button class="form-btn" id="load-gitee-history-btn" style="margin-bottom: 15px;">加载提交历史</button>
+            <div id="gitee-history-list">
+                <!-- 提交历史列表将通过JavaScript动态填充 -->
+            </div>
+            <div id="gitee-history-empty" style="display: none;">
+                <p>暂无提交记录。</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h2 class="card-title">使用说明</h2>
+    <div class="card-content">
+        <h3>1. 获取Gitee访问令牌</h3>
+        <p>登录Gitee → 点击头像 → 设置 → 私人令牌 → 生成新令牌。</p>
+
+        <h3>2. 配置仓库地址</h3>
+        <p>格式：https://gitee.com/用户名/仓库名</p>
+        <p>确保仓库已创建且有写入权限。</p>
+
+        <h3>3. 提交代码/笔记</h3>
+        <p>配置完成后，可以一键提交代码或笔记到Gitee。</p>
+
+        <h3>4. 注意事项</h3>
+        <p>访问令牌具有读写权限，请妥善保管。</p>
+        <p>提交前请确认代码/笔记内容。</p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,329 @@
+<!--
+用户设置页面：settings.html
+功能：用户账户设置和偏好配置
+作者：大一学生助手
+创建时间：2026-04-12
+
+这个页面提供用户设置功能，包括密码修改、编辑器设置、格式化选项等。
+-->
+
+{% extends "base.html" %}
+
+{% block title %}用户设置{% endblock %}
+
+{% block content %}
+<!-- 用户统计信息 -->
+<div class="card">
+    <h2 class="card-title">使用统计</h2>
+    <div class="card-content">
+        <p><strong>用户名：</strong>{{ username }}</p>
+        <p><strong>注册时间：</strong>{{ user_info.created_at if user_info else '未知' }}</p>
+        <p><strong>代码片段数量：</strong>{{ stats.code_count if stats else 0 }}</p>
+        <p><strong>笔记数量：</strong>{{ stats.document_count if stats else 0 }}</p>
+        <p><strong>总字数：</strong>{{ stats.total_words if stats else 0 }}</p>
+    </div>
+</div>
+
+<!-- 密码修改 -->
+<div class="card card-narrow">
+    <h2 class="card-title">修改密码</h2>
+    <div class="card-content">
+        <form id="password-form">
+            <div class="form-group">
+                <label class="form-label" for="old-password">当前密码：</label>
+                <input type="password" id="old-password" name="old_password"
+                       class="form-input" placeholder="请输入当前密码" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="new-password">新密码：</label>
+                <input type="password" id="new-password" name="new_password"
+                       class="form-input" placeholder="请输入新密码（至少6位）" minlength="6" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="confirm-password">确认新密码：</label>
+                <input type="password" id="confirm-password" name="confirm_password"
+                       class="form-input" placeholder="请再次输入新密码" minlength="6" required>
+            </div>
+            <button type="submit" class="form-btn">修改密码</button>
+        </form>
+    </div>
+</div>
+
+<!-- 编辑器设置 -->
+<div class="card">
+    <h2 class="card-title">编辑器设置</h2>
+    <div class="card-content">
+        <form id="editor-settings-form">
+            <div class="form-group">
+                <label class="form-label" for="font-size">字体大小：</label>
+                <select id="font-size" name="font_size" class="form-input" style="width: 150px;">
+                    <option value="12">12px</option>
+                    <option value="14" selected>14px</option>
+                    <option value="16">16px</option>
+                    <option value="18">18px</option>
+                    <option value="20">20px</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="default-language">默认编程语言：</label>
+                <select id="default-language" name="default_language" class="form-input" style="width: 200px;">
+                    <option value="python" selected>Python</option>
+                    <option value="javascript">JavaScript</option>
+                    <option value="html">HTML</option>
+                    <option value="css">CSS</option>
+                    <option value="java">Java</option>
+                    <option value="cpp">C++</option>
+                    <option value="c">C</option>
+                    <option value="sql">SQL</option>
+                    <option value="bash">Bash/Shell</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">
+                    <input type="checkbox" id="auto-save" name="auto_save" checked>
+                    自动保存（每30秒）
+                </label>
+            </div>
+            <div class="form-group">
+                <label class="form-label">
+                    <input type="checkbox" id="auto-format" name="auto_format">
+                    保存时自动格式化代码
+                </label>
+            </div>
+            <button type="submit" class="form-btn">保存编辑器设置</button>
+        </form>
+    </div>
+</div>
+
+<!-- 代码格式化选项 -->
+<div class="card">
+    <h2 class="card-title">代码格式化选项</h2>
+    <div class="card-content">
+        <form id="format-settings-form">
+            <div class="form-group">
+                <label class="form-label" for="indent-size">缩进大小：</label>
+                <select id="indent-size" name="indent_size" class="form-input" style="width: 150px;">
+                    <option value="2">2个空格</option>
+                    <option value="4" selected>4个空格</option>
+                    <option value="8">8个空格</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="indent-type">缩进类型：</label>
+                <select id="indent-type" name="indent_type" class="form-input" style="width: 150px;">
+                    <option value="spaces" selected>空格</option>
+                    <option value="tabs">制表符</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">
+                    <input type="checkbox" id="trim-whitespace" name="trim_whitespace" checked>
+                    移除行尾空格
+                </label>
+            </div>
+            <div class="form-group">
+                <label class="form-label">
+                    <input type="checkbox" id="insert-newline" name="insert_newline" checked>
+                    文件末尾添加换行
+                </label>
+            </div>
+            <button type="submit" class="form-btn">保存格式化设置</button>
+        </form>
+    </div>
+</div>
+
+<!-- 数据管理 -->
+<div class="card">
+    <h2 class="card-title">数据管理</h2>
+    <div class="card-content">
+        <p>您可以导出您的所有数据（代码片段和笔记）用于备份或迁移。</p>
+        <a href="/api/settings/export" class="form-btn mt-20">
+            导出所有数据
+        </a>
+    </div>
+</div>
+
+<!-- 返回链接 -->
+<div class="mt-20">
+    <a href="{{ url_for('dashboard') }}" class="form-btn">← 返回首页</a>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('设置页面加载完成');
+
+    // 加载用户设置
+    loadUserSettings();
+
+    // 绑定密码修改表单
+    const passwordForm = document.getElementById('password-form');
+    if (passwordForm) {
+        passwordForm.addEventListener('submit', changePassword);
+    }
+
+    // 绑定编辑器设置表单
+    const editorSettingsForm = document.getElementById('editor-settings-form');
+    if (editorSettingsForm) {
+        editorSettingsForm.addEventListener('submit', saveEditorSettings);
+    }
+
+    // 绑定格式化设置表单
+    const formatSettingsForm = document.getElementById('format-settings-form');
+    if (formatSettingsForm) {
+        formatSettingsForm.addEventListener('submit', saveFormatSettings);
+    }
+});
+
+/**
+ * 加载用户设置
+ */
+function loadUserSettings() {
+    fetch('/api/settings')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.settings) {
+                const settings = data.settings;
+
+                // 加载编辑器设置
+                if (settings.font_size) {
+                    document.getElementById('font-size').value = settings.font_size;
+                }
+                if (settings.default_language) {
+                    document.getElementById('default-language').value = settings.default_language;
+                }
+                if (settings.auto_save !== undefined) {
+                    document.getElementById('auto-save').checked = settings.auto_save;
+                }
+                if (settings.auto_format !== undefined) {
+                    document.getElementById('auto-format').checked = settings.auto_format;
+                }
+
+                // 加载格式化设置
+                if (settings.code_indent_size) {
+                    document.getElementById('indent-size').value = settings.code_indent_size;
+                }
+                if (settings.code_indent_type) {
+                    document.getElementById('indent-type').value = settings.code_indent_type;
+                }
+                if (settings.trim_trailing_whitespace !== undefined) {
+                    document.getElementById('trim-whitespace').checked = settings.trim_trailing_whitespace;
+                }
+                if (settings.insert_final_newline !== undefined) {
+                    document.getElementById('insert-newline').checked = settings.insert_final_newline;
+                }
+            }
+        })
+        .catch(error => {
+            console.error('加载设置失败：', error);
+        });
+}
+
+/**
+ * 修改密码
+ */
+function changePassword(event) {
+    event.preventDefault();
+
+    const oldPassword = document.getElementById('old-password').value;
+    const newPassword = document.getElementById('new-password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+
+    // 验证密码
+    if (newPassword !== confirmPassword) {
+        showMessage('两次输入的密码不一致', 'error');
+        return;
+    }
+
+    if (newPassword.length < 6) {
+        showMessage('新密码至少需要6位', 'error');
+        return;
+    }
+
+    // 发送请求
+    fetch('/api/settings/password', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            old_password: oldPassword,
+            new_password: newPassword
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showMessage('密码修改成功', 'success');
+            // 清空表单
+            document.getElementById('password-form').reset();
+        } else {
+            showMessage('密码修改失败：' + data.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('修改密码失败：', error);
+        showMessage('修改密码失败：' + error.message, 'error');
+    });
+}
+
+/**
+ * 保存编辑器设置
+ */
+function saveEditorSettings(event) {
+    event.preventDefault();
+
+    const settings = {
+        font_size: document.getElementById('font-size').value,
+        default_language: document.getElementById('default-language').value,
+        auto_save: document.getElementById('auto-save').checked,
+        auto_format: document.getElementById('auto-format').checked
+    };
+
+    saveSettings(settings, '编辑器设置');
+}
+
+/**
+ * 保存格式化设置
+ */
+function saveFormatSettings(event) {
+    event.preventDefault();
+
+    const settings = {
+        code_indent_size: parseInt(document.getElementById('indent-size').value),
+        code_indent_type: document.getElementById('indent-type').value,
+        trim_trailing_whitespace: document.getElementById('trim-whitespace').checked,
+        insert_final_newline: document.getElementById('insert-newline').checked
+    };
+
+    saveSettings(settings, '格式化设置');
+}
+
+/**
+ * 保存设置
+ */
+function saveSettings(settings, settingName) {
+    fetch('/api/settings', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(settings)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showMessage(settingName + '保存成功', 'success');
+        } else {
+            showMessage(settingName + '保存失败：' + data.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('保存设置失败：', error);
+        showMessage(settingName + '保存失败：' + error.message, 'error');
+    });
+}
+</script>
+{% endblock %}

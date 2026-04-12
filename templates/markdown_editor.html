@@ -1,0 +1,234 @@
+<!--
+Markdown编辑器页面：markdown_editor.html
+功能：Markdown笔记编辑和预览
+作者：大一学生助手
+创建时间：2026-04-10
+
+这个页面显示Markdown编辑器，用户可以编写笔记并实时预览。
+这个功能在模块4完整实现。
+-->
+
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2 class="card-title">{{ page_title }}</h2>
+
+    <!-- 操作导航 -->
+    <div class="mb-20">
+        <a href="{{ url_for('document_list') }}" class="form-btn mr-10">← 返回笔记列表</a>
+        {% if document %}
+            <a href="{{ url_for('delete_document', doc_id=document.id) }}"
+               class="form-btn"
+               style="background-color: #e74c3c;"
+               onclick="return confirm('确定要删除笔记"{{ document.title }}"吗？此操作不可撤销！');">
+                删除笔记
+            </a>
+        {% endif %}
+    </div>
+
+    <!-- 笔记编辑表单 -->
+    <form method="POST" action="{{ url_for('save_document') }}" id="note-form">
+        <!-- 隐藏字段：笔记ID（如果是编辑模式） -->
+        {% if document %}
+            <input type="hidden" name="doc_id" value="{{ document.id }}">
+        {% endif %}
+
+        <!-- 笔记标题输入 -->
+        <div class="form-group">
+            <label class="form-label" for="title">笔记标题：</label>
+            <input type="text" id="title" name="title" class="form-input"
+                   placeholder="请输入笔记标题（例如：学习笔记）"
+                   value="{{ document.title if document else '' }}"
+                   required>
+        </div>
+
+        <!-- Markdown编辑和预览区域 -->
+        <div class="flex mb-20" style="gap: 20px;">
+            <!-- 编辑器区域 -->
+            <div style="flex: 1;">
+                <label class="form-label" for="markdown-editor">Markdown编辑器：</label>
+                <textarea id="markdown-editor" name="content" class="form-input" rows="20"
+                          placeholder="请输入Markdown内容..."
+                          required>{% if document %}{{ document.content }}{% else %}# 新笔记
+
+## 介绍
+在这里开始编写您的笔记...
+
+## Markdown基础语法
+- **粗体文本**：`**粗体**`
+- *斜体文本*：`*斜体*`
+- [链接]({{ url_for('dashboard') }})：`[链接文字](URL)`
+- `行内代码`：`` `代码` ``
+- 列表项：
+  - 项目1
+  - 项目2
+
+## 代码块
+```python
+def hello():
+    print("Hello Markdown!")
+```
+
+## 表格
+| 列1 | 列2 |
+|-----|-----|
+| 内容 | 内容 |
+{% endif %}</textarea>
+            </div>
+
+            <!-- 预览区域 -->
+            <div style="flex: 1;">
+                <label class="form-label">实时预览：</label>
+                <div class="form-input markdown-preview" style="height: 500px; overflow: auto; background-color: white; padding: 15px;" id="markdown-preview">
+                    <p>预览区域 - 输入Markdown内容后实时预览</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="form-group">
+            <button type="submit" class="form-btn save-note-btn" id="save-btn">保存笔记</button>
+            <button type="button" class="form-btn preview-toggle-btn ml-10" id="toggle-preview-btn">
+                切换预览模式
+            </button>
+            <button type="button" class="form-btn btn-secondary ml-10" onclick="window.location.href='{{ url_for('document_list') }}'">
+                取消
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- 使用说明 -->
+<div class="card">
+    <h2 class="card-title">Markdown使用说明</h2>
+    <div class="card-content">
+        <h3>常用语法：</h3>
+        <table class="table" style="border: 1px solid #ddd;">
+            <thead>
+                <tr>
+                    <th style="border: 1px solid #ddd;">语法</th>
+                    <th style="border: 1px solid #ddd;">效果</th>
+                    <th style="border: 1px solid #ddd;">示例</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="border: 1px solid #ddd;"># 标题</td>
+                    <td style="border: 1px solid #ddd;">一级标题</td>
+                    <td style="border: 1px solid #ddd;"><code># 标题1</code></td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #ddd;">## 标题</td>
+                    <td style="border: 1px solid #ddd;">二级标题</td>
+                    <td style="border: 1px solid #ddd;"><code>## 标题2</code></td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #ddd;">**文本**</td>
+                    <td style="border: 1px solid #ddd;">粗体</td>
+                    <td style="border: 1px solid #ddd;"><code>**粗体文本**</code></td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #ddd;">*文本*</td>
+                    <td style="border: 1px solid #ddd;">斜体</td>
+                    <td style="border: 1px solid #ddd;"><code>*斜体文本*</code></td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #ddd;">[文字](链接)</td>
+                    <td style="border: 1px solid #ddd;">链接</td>
+                    <td style="border: 1px solid #ddd;"><code>[百度](https://baidu.com)</code></td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #ddd;">`代码`</td>
+                    <td style="border: 1px solid #ddd;">行内代码</td>
+                    <td style="border: 1px solid #ddd;"><code>`print("hello")`</code></td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #ddd;">```代码```</td>
+                    <td style="border: 1px solid #ddd;">代码块</td>
+                    <td style="border: 1px solid #ddd;"><pre>```python
+print("Hello")
+```</pre></td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #ddd;">- 项目</td>
+                    <td style="border: 1px solid #ddd;">无序列表</td>
+                    <td style="border: 1px solid #ddd;"><code>- 项目1</code></td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #ddd;">1. 项目</td>
+                    <td style="border: 1px solid #ddd;">有序列表</td>
+                    <td style="border: 1px solid #ddd;"><code>1. 第一项</code></td>
+                </tr>
+            </tbody>
+        </table>
+        <p class="mt-20">
+            <strong>提示：</strong> 编辑器支持实时预览，右侧预览区域会实时显示Markdown渲染效果。
+            点击"切换预览模式"可以在编辑模式和纯预览模式之间切换。
+        </p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// 页面特定的JavaScript代码
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Markdown编辑器页面加载完成');
+
+    // 初始化Markdown编辑器
+    if (typeof initMarkdownEditor === 'function') {
+        initMarkdownEditor();
+    }
+
+    // 绑定保存按钮事件
+    const saveBtn = document.getElementById('save-btn');
+    if (saveBtn) {
+        saveBtn.addEventListener('click', function(event) {
+            // 这里可以添加额外的验证逻辑
+            console.log('保存笔记按钮被点击');
+            // 表单会正常提交，这里可以添加确认提示等
+        });
+    }
+
+    // 绑定切换预览按钮事件
+    const toggleBtn = document.getElementById('toggle-preview-btn');
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', function(event) {
+            if (typeof toggleMarkdownPreview === 'function') {
+                toggleMarkdownPreview(event);
+            } else {
+                alert('切换预览功能正在初始化...');
+            }
+        });
+    }
+
+    // 自动保存草稿提示
+    const editor = document.getElementById('markdown-editor');
+    const titleInput = document.getElementById('title');
+    let saveTimer;
+
+    function scheduleAutoSave() {
+        // 清除之前的计时器
+        if (saveTimer) {
+            clearTimeout(saveTimer);
+        }
+
+        // 设置新的计时器（10秒后提示）
+        saveTimer = setTimeout(function() {
+            console.log('笔记已更改，可以添加自动保存功能');
+            // 在实际应用中，这里可以添加自动保存到本地存储的功能
+        }, 10000);
+    }
+
+    if (editor) {
+        editor.addEventListener('input', scheduleAutoSave);
+    }
+    if (titleInput) {
+        titleInput.addEventListener('input', scheduleAutoSave);
+    }
+});
+</script>
+{% endblock %}

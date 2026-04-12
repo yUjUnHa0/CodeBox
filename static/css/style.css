@@ -1,0 +1,911 @@
+/*
+样式表文件：style.css
+功能：定义网页的所有样式
+作者：大一学生助手
+创建时间：2026-04-10
+
+这个文件包含了所有CSS样式。
+使用简单的CSS选择器和属性，方便理解。
+所有样式都有中文注释说明作用。
+*/
+
+/* 基础样式重置 */
+/* 清除浏览器默认的边距和内边距，让所有元素表现一致 */
+* {
+    margin: 0;          /* 外边距设为0 */
+    padding: 0;         /* 内边距设为0 */
+    box-sizing: border-box; /* 盒子模型设为border-box，方便计算尺寸 */
+}
+
+/* 设置网页字体和背景色 */
+body {
+    font-family: 'Microsoft YaHei', '微软雅黑', Arial, sans-serif; /* 字体族 */
+    font-size: 16px;    /* 基础字体大小 */
+    line-height: 1.6;   /* 行高，让文字更易读 */
+    color: #333;        /* 文字颜色，深灰色 */
+    background-color: #f5f5f5; /* 背景颜色，浅灰色 */
+}
+
+/* 容器类 */
+/* 容器用于限制内容宽度，并居中显示 */
+.container {
+    max-width: 1200px;  /* 最大宽度1200像素 */
+    margin: 0 auto;     /* 左右外边距自动，实现水平居中 */
+    padding: 0 20px;    /* 左右内边距20像素 */
+}
+
+/* 头部样式 */
+.header {
+    background-color: #2c3e50; /* 背景颜色，深蓝色 */
+    color: white;             /* 文字颜色，白色 */
+    padding: 15px 0;          /* 上下内边距15像素 */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* 底部阴影，增加层次感 */
+}
+
+/* 头部容器：使用flex布局让Logo、导航和用户区域水平排列 */
+.header .container {
+    display: flex;            /* 使用flex布局 */
+    justify-content: space-between; /* 子元素两端对齐 */
+    align-items: center;      /* 子元素垂直居中 */
+}
+
+/* Logo样式 */
+.logo a {
+    color: white;            /* 文字颜色，白色 */
+    font-size: 24px;         /* 字体大小24像素 */
+    font-weight: bold;       /* 字体加粗 */
+    text-decoration: none;   /* 去掉下划线 */
+}
+
+.logo a:hover {
+    color: #3498db;          /* 鼠标悬停时颜色变为蓝色 */
+}
+
+/* 导航菜单样式 */
+.nav-list {
+    display: flex;           /* 使用flex布局让导航项水平排列 */
+    list-style: none;        /* 去掉列表符号 */
+}
+
+.nav-item {
+    margin-left: 20px;       /* 左边距20像素，让导航项之间有间隔 */
+}
+
+.nav-link {
+    color: white;            /* 文字颜色，白色 */
+    text-decoration: none;   /* 去掉下划线 */
+    padding: 8px 12px;       /* 内边距，让链接区域更大 */
+    border-radius: 4px;      /* 圆角边框 */
+    transition: background-color 0.3s; /* 背景色过渡动画 */
+}
+
+.nav-link:hover {
+    background-color: #34495e; /* 鼠标悬停时背景色变深 */
+}
+
+/* 用户区域样式 */
+.user-area {
+    display: flex;           /* 使用flex布局 */
+    align-items: center;     /* 垂直居中 */
+}
+
+.username {
+    margin-right: 15px;      /* 右边距15像素 */
+    color: #ecf0f1;          /* 文字颜色，浅灰色 */
+}
+
+/* 按钮样式 */
+.login-btn,
+.register-btn,
+.logout-btn {
+    color: white;            /* 文字颜色，白色 */
+    text-decoration: none;   /* 去掉下划线 */
+    padding: 8px 16px;       /* 内边距 */
+    border-radius: 4px;      /* 圆角边框 */
+    margin-left: 10px;       /* 左边距10像素，让按钮之间有间隔 */
+    transition: background-color 0.3s; /* 背景色过渡动画 */
+}
+
+.login-btn {
+    background-color: #3498db; /* 登录按钮背景色，蓝色 */
+}
+
+.register-btn {
+    background-color: #2ecc71; /* 注册按钮背景色，绿色 */
+}
+
+.logout-btn {
+    background-color: #e74c3c; /* 退出按钮背景色，红色 */
+}
+
+.login-btn:hover {
+    background-color: #2980b9; /* 鼠标悬停时背景色变深 */
+}
+
+.register-btn:hover {
+    background-color: #27ae60; /* 鼠标悬停时背景色变深 */
+}
+
+.logout-btn:hover {
+    background-color: #c0392b; /* 鼠标悬停时背景色变深 */
+}
+
+/* 主要内容区域样式 */
+.main {
+    padding: 30px 0;         /* 上下内边距30像素 */
+    min-height: 500px;       /* 最小高度500像素，避免页面太短 */
+}
+
+/* 页面标题样式 */
+.page-title {
+    font-size: 32px;         /* 字体大小32像素 */
+    margin-bottom: 30px;     /* 底部外边距30像素 */
+    color: #2c3e50;          /* 文字颜色，深蓝色 */
+    border-bottom: 2px solid #3498db; /* 底部边框，蓝色 */
+    padding-bottom: 10px;    /* 底部内边距10像素 */
+}
+
+/* 卡片样式（用于内容区块） */
+.card {
+    background-color: white; /* 背景颜色，白色 */
+    border-radius: 8px;      /* 圆角边框 */
+    padding: 20px;           /* 内边距20像素 */
+    margin-bottom: 20px;     /* 底部外边距20像素 */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* 阴影，增加层次感 */
+}
+
+.card-title {
+    font-size: 24px;         /* 字体大小24像素 */
+    margin-bottom: 15px;     /* 底部外边距15像素 */
+    color: #2c3e50;          /* 文字颜色，深蓝色 */
+}
+
+.card-content {
+    line-height: 1.8;        /* 行高1.8，让文字更易读 */
+}
+
+/* 网格布局（用于功能入口） */
+.grid {
+    display: grid;                          /* 使用grid布局 */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* 自动填充列 */
+    gap: 20px;                              /* 网格间隙20像素 */
+    margin-top: 30px;                       /* 顶部外边距30像素 */
+}
+
+.grid-item {
+    background-color: white;                /* 背景颜色，白色 */
+    border-radius: 8px;                     /* 圆角边框 */
+    padding: 25px;                          /* 内边距25像素 */
+    text-align: center;                     /* 文字居中 */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* 阴影，增加层次感 */
+    transition: transform 0.3s, box-shadow 0.3s; /* 过渡动画 */
+}
+
+.grid-item:hover {
+    transform: translateY(-5px);            /* 鼠标悬停时向上移动5像素 */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2); /* 鼠标悬停时阴影加深 */
+}
+
+.grid-item h3 {
+    font-size: 20px;        /* 字体大小20像素 */
+    margin-bottom: 15px;    /* 底部外边距15像素 */
+    color: #2c3e50;         /* 文字颜色，深蓝色 */
+}
+
+.grid-item p {
+    color: #7f8c8d;         /* 文字颜色，灰色 */
+    margin-bottom: 20px;    /* 底部外边距20像素 */
+}
+
+.grid-btn {
+    display: inline-block;  /* 行内块元素 */
+    background-color: #3498db; /* 背景颜色，蓝色 */
+    color: white;           /* 文字颜色，白色 */
+    padding: 10px 20px;     /* 内边距 */
+    border-radius: 4px;     /* 圆角边框 */
+    text-decoration: none;  /* 去掉下划线 */
+    transition: background-color 0.3s; /* 背景色过渡动画 */
+}
+
+.grid-btn:hover {
+    background-color: #2980b9; /* 鼠标悬停时背景色变深 */
+}
+
+/* 页脚样式 */
+.footer {
+    background-color: #2c3e50; /* 背景颜色，深蓝色 */
+    color: white;             /* 文字颜色，白色 */
+    padding: 30px 0;          /* 上下内边距30像素 */
+    margin-top: 50px;         /* 顶部外边距50像素 */
+    text-align: center;       /* 文字居中 */
+}
+
+.footer p {
+    margin-bottom: 10px;      /* 底部外边距10像素 */
+    color: #ecf0f1;           /* 文字颜色，浅灰色 */
+}
+
+/* 响应式设计：平板设备 */
+@media (max-width: 768px) {
+    /* 平板设备上的样式调整 */
+    .header .container {
+        flex-direction: column; /* 容器改为垂直排列 */
+        text-align: center;     /* 文字居中 */
+    }
+
+    .nav-list {
+        margin: 15px 0;         /* 上下外边距15像素 */
+        flex-wrap: wrap;        /* 允许换行 */
+        justify-content: center; /* 居中对齐 */
+    }
+
+    .nav-item {
+        margin: 5px 10px;       /* 调整边距 */
+    }
+
+    .user-area {
+        margin-top: 15px;       /* 顶部外边距15像素 */
+    }
+
+    .grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* 调整网格列宽 */
+    }
+}
+
+/* 响应式设计：手机设备 */
+@media (max-width: 480px) {
+    /* 手机设备上的样式调整 */
+    .page-title {
+        font-size: 24px;        /* 缩小标题字体 */
+    }
+
+    .grid {
+        grid-template-columns: 1fr; /* 单列布局 */
+    }
+
+    .card {
+        padding: 15px;          /* 减小内边距 */
+    }
+}
+
+/* 表单样式（用于登录、注册等表单） */
+.form-group {
+    margin-bottom: 20px;        /* 底部外边距20像素 */
+}
+
+.form-label {
+    display: block;             /* 块级元素 */
+    margin-bottom: 8px;         /* 底部外边距8像素 */
+    font-weight: bold;          /* 字体加粗 */
+    color: #2c3e50;             /* 文字颜色，深蓝色 */
+}
+
+.form-input {
+    width: 100%;                /* 宽度100% */
+    padding: 12px;              /* 内边距12像素 */
+    border: 1px solid #ddd;     /* 边框，浅灰色 */
+    border-radius: 4px;         /* 圆角边框 */
+    font-size: 16px;            /* 字体大小16像素 */
+}
+
+.form-input:focus {
+    border-color: #3498db;      /* 聚焦时边框颜色变为蓝色 */
+    outline: none;              /* 去掉默认轮廓线 */
+}
+
+.form-btn {
+    background-color: #3498db;  /* 背景颜色，蓝色 */
+    color: white;               /* 文字颜色，白色 */
+    border: none;               /* 去掉边框 */
+    padding: 12px 24px;         /* 内边距 */
+    border-radius: 4px;         /* 圆角边框 */
+    font-size: 16px;            /* 字体大小16像素 */
+    cursor: pointer;            /* 鼠标指针变为手型 */
+    transition: background-color 0.3s; /* 背景色过渡动画 */
+}
+
+.form-btn:hover {
+    background-color: #2980b9;  /* 鼠标悬停时背景色变深 */
+}
+
+/* 消息提示样式 */
+.message {
+    padding: 15px;              /* 内边距15像素 */
+    border-radius: 4px;         /* 圆角边框 */
+    margin-bottom: 20px;        /* 底部外边距20像素 */
+}
+
+.message-success {
+    background-color: #d4edda;  /* 成功消息背景色，浅绿色 */
+    color: #155724;             /* 成功消息文字颜色，深绿色 */
+    border: 1px solid #c3e6cb;  /* 边框，绿色 */
+}
+
+.message-error {
+    background-color: #f8d7da;  /* 错误消息背景色，浅红色 */
+    color: #721c24;             /* 错误消息文字颜色，深红色 */
+    border: 1px solid #f5c6cb;  /* 边框，红色 */
+}
+
+.message-info {
+    background-color: #d1ecf1;  /* 信息消息背景色，浅蓝色 */
+    color: #0c5460;             /* 信息消息文字颜色，深蓝色 */
+    border: 1px solid #bee5eb;  /* 边框，蓝色 */
+}
+
+.message-warning {
+    background-color: #fff3cd;  /* 警告消息背景色，浅黄色 */
+    color: #856404;             /* 警告消息文字颜色，深黄色 */
+    border: 1px solid #ffeaa7;  /* 边框，黄色 */
+}
+
+/* Gitee进度条样式 */
+.progress-bar {
+    width: 100%;
+    height: 10px;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: #4CAF50;
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+}
+
+/* Gitee历史记录表格样式 */
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.history-table th {
+    background-color: #f8f9fa;
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: bold;
+    color: #333;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.history-table td {
+    padding: 10px 15px;
+    border-bottom: 1px solid #dee2e6;
+    vertical-align: top;
+}
+
+.history-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+.history-table .history-success {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.history-table .history-error {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.history-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* 消息区域样式 */
+.message-hidden {
+    display: none;
+}
+
+.message-success, .message-error, .message-info, .message-warning {
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.gitee-status .message-success,
+.gitee-status .message-error,
+.gitee-status .message-info {
+    margin-bottom: 10px;
+}
+
+.gitee-history {
+    background-color: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* ============================================
+模块7：新增样式类
+============================================ */
+
+/* 通用表格样式 */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.table th {
+    background-color: #f8f9fa;
+    padding: 12px;
+    text-align: left;
+    font-weight: bold;
+    color: #333;
+    border-bottom: 2px solid #ddd;
+}
+
+.table td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+.table tr:hover {
+    background-color: #f8f9fa;
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+/* 模态框样式 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal.show {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.modal-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #999;
+}
+
+.modal-close:hover {
+    color: #333;
+}
+
+.modal-body {
+    margin-bottom: 20px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* 操作按钮样式 */
+.btn-action {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.btn-edit {
+    background-color: #3498db;
+    color: white;
+}
+
+.btn-edit:hover {
+    background-color: #2980b9;
+}
+
+.btn-delete {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.btn-delete:hover {
+    background-color: #c0392b;
+}
+
+.btn-view {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.btn-view:hover {
+    background-color: #27ae60;
+}
+
+.btn-secondary {
+    background-color: #95a5a6;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #7f8c8d;
+}
+
+.btn-small {
+    font-size: 12px;
+    padding: 4px 8px;
+}
+
+/* 语言标签样式 */
+.badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+}
+
+.badge-python {
+    background-color: #3776ab;
+}
+
+.badge-javascript {
+    background-color: #f7df1e;
+    color: #333;
+}
+
+.badge-html {
+    background-color: #e34c26;
+}
+
+.badge-css {
+    background-color: #264de4;
+}
+
+.badge-java {
+    background-color: #007396;
+}
+
+.badge-cpp {
+    background-color: #00599c;
+}
+
+.badge-c {
+    background-color: #a8b9cc;
+    color: #333;
+}
+
+.badge-sql {
+    background-color: #e48e00;
+}
+
+.badge-bash {
+    background-color: #4eaa25;
+}
+
+.badge-markdown {
+    background-color: #083fa1;
+}
+
+.badge-other {
+    background-color: #95a5a6;
+}
+
+/* Flex布局辅助类 */
+.flex {
+    display: flex;
+}
+
+.flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+/* 间距辅助类 */
+.mt-10 {
+    margin-top: 10px;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+.mt-30 {
+    margin-top: 30px;
+}
+
+.mb-10 {
+    margin-bottom: 10px;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+.ml-10 {
+    margin-left: 10px;
+}
+
+.ml-20 {
+    margin-left: 20px;
+}
+
+.mr-10 {
+    margin-right: 10px;
+}
+
+.mr-20 {
+    margin-right: 20px;
+}
+
+/* 内边距辅助类 */
+.p-10 {
+    padding: 10px;
+}
+
+.p-12 {
+    padding: 12px;
+}
+
+.p-20 {
+    padding: 20px;
+}
+
+/* 背景色辅助类 */
+.bg-gray {
+    background-color: #f8f9fa;
+}
+
+.bg-gray-light {
+    background-color: #f5f5f5;
+}
+
+/* 宽度辅助类 */
+.w-300 {
+    width: 300px;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+/* 卡片变体 */
+.card-center {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.card-narrow {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.card-wide {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Markdown预览样式 */
+.markdown-preview {
+    line-height: 1.8;
+}
+
+.markdown-preview h1,
+.markdown-preview h2,
+.markdown-preview h3 {
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    color: #333;
+}
+
+.markdown-preview h1 {
+    font-size: 2em;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 0.3em;
+}
+
+.markdown-preview h2 {
+    font-size: 1.5em;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.3em;
+}
+
+.markdown-preview h3 {
+    font-size: 1.25em;
+}
+
+.markdown-preview p {
+    margin: 1em 0;
+    line-height: 1.6;
+}
+
+.markdown-preview ul,
+.markdown-preview ol {
+    margin: 1em 0;
+    padding-left: 2em;
+}
+
+.markdown-preview li {
+    margin: 0.5em 0;
+}
+
+.markdown-preview code {
+    background-color: #f8f9fa;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 0.9em;
+}
+
+.markdown-preview pre {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    overflow: auto;
+}
+
+.markdown-preview pre code {
+    background-color: transparent;
+    padding: 0;
+}
+
+.markdown-preview blockquote {
+    border-left: 4px solid #ddd;
+    margin: 1em 0;
+    padding-left: 1em;
+    color: #666;
+}
+
+.markdown-preview a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.markdown-preview a:hover {
+    text-decoration: underline;
+}
+
+.markdown-preview table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1em 0;
+}
+
+.markdown-preview th,
+.markdown-preview td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.markdown-preview th {
+    background-color: #f8f9fa;
+}
+
+/* 错误页面样式 */
+.error-code {
+    font-size: 72px;
+    font-weight: bold;
+    color: #e74c3c;
+    line-height: 1;
+}
+
+.error-title {
+    font-size: 28px;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.error-message {
+    color: #7f8c8d;
+    margin-bottom: 30px;
+}
+
+/* 响应式设计优化 */
+@media (max-width: 1024px) {
+    .container {
+        max-width: 100%;
+        padding: 0 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        padding: 20px;
+    }
+
+    .table-responsive {
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .table th,
+    .table td {
+        padding: 10px 8px;
+        font-size: 14px;
+    }
+
+    .btn-action {
+        padding: 5px 10px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-content {
+        padding: 15px;
+    }
+
+    .modal-title {
+        font-size: 18px;
+    }
+
+    .btn-action {
+        display: block;
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    .badge {
+        font-size: 11px;
+        padding: 3px 6px;
+    }
+}

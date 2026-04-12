@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<!--
+基础模板文件：base.html
+功能：所有页面的基础模板，包含导航栏和基本结构
+作者：大一学生助手
+创建时间：2026-04-10
+
+这个文件是所有HTML页面的基础模板。
+其他页面会继承这个模板，只需要填充内容区域。
+这样避免了重复的HTML代码。
+-->
+<html lang="zh-CN">
+<head>
+    <!-- 网页元信息 -->
+    <meta charset="UTF-8">
+    <!-- 设置视口，让网页在移动设备上正常显示 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- 网页标题 -->
+    <!-- page_title变量由Flask路由传递 -->
+    <title>{% block title %}简单小工具{% endblock %} - {{ page_title|default('我的工具') }}</title>
+
+    <!-- 引入CSS样式文件 -->
+    <!-- url_for('static', filename='css/style.css') 生成正确的CSS文件路径 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <!-- 额外的CSS块 -->
+    <!-- 子页面可以在这里添加额外的CSS -->
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- 页面头部：导航栏 -->
+    <header class="header">
+        <div class="container">
+            <!-- 网站Logo -->
+            <div class="logo">
+                <a href="{{ url_for('index') }}">简单小工具</a>
+            </div>
+
+            <!-- 导航菜单 -->
+            <nav class="nav">
+                <ul class="nav-list">
+                    <!-- 首页链接 -->
+                    <li class="nav-item">
+                        <a href="{{ url_for('dashboard') }}" class="nav-link">首页</a>
+                    </li>
+
+                    <!-- 代码编辑器链接（模块3实现） -->
+                    <li class="nav-item">
+                        <a href="{{ url_for('code_editor') }}" class="nav-link">代码保存</a>
+                    </li>
+
+                    <!-- Markdown编辑器链接（模块4实现） -->
+                    <li class="nav-item">
+                        <a href="{{ url_for('markdown_editor') }}" class="nav-link">笔记保存</a>
+                    </li>
+
+                    <!-- Gitee链接（模块5实现） -->
+                    <li class="nav-item">
+                        <a href="{{ url_for('gitee_page') }}" class="nav-link">Gitee提交</a>
+                    </li>
+
+                    <!-- 设置链接（模块6实现） -->
+                    <li class="nav-item">
+                        <a href="{{ url_for('settings_page') }}" class="nav-link">设置</a>
+                    </li>
+
+                    <!-- 关于页面链接 -->
+                    <li class="nav-item">
+                        <a href="{{ url_for('about') }}" class="nav-link">关于</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- 用户信息区域 -->
+            <div class="user-area">
+                <!-- 检查用户是否登录 -->
+                {% if session.username %}
+                    <!-- 用户已登录，显示用户名和退出链接 -->
+                    <span class="username">欢迎, {{ session.username }}</span>
+                    <a href="{{ url_for('logout') }}" class="logout-btn">退出</a>
+                {% else %}
+                    <!-- 用户未登录，显示登录和注册链接 -->
+                    <a href="{{ url_for('login') }}" class="login-btn">登录</a>
+                    <a href="{{ url_for('register') }}" class="register-btn">注册</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <!-- 子页面会在这里填充内容 -->
+    <main class="main">
+        <div class="container">
+            <!-- 页面标题 -->
+            <h1 class="page-title">{{ page_title|default('页面标题') }}</h1>
+
+            <!-- 内容块 -->
+            <!-- 子页面必须填充这个块 -->
+            {% block content %}
+            <!-- 这里的内容会被子页面替换 -->
+            {% endblock %}
+        </div>
+    </main>
+
+    <!-- 页面底部 -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2026 简单小工具 - 为初学者设计的自用小工具</p>
+            <p>作者：YuCoding | 版本：1.0.8</p>
+        </div>
+    </footer>
+
+    <!-- 引入JavaScript文件 -->
+    <!-- url_for('static', filename='js/main.js') 生成正确的JS文件路径 -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <!-- 额外的JavaScript块 -->
+    <!-- 子页面可以在这里添加额外的JavaScript -->
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

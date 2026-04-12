@@ -1,0 +1,175 @@
+<!--
+代码编辑器页面：code_editor.html
+功能：代码编辑和保存
+作者：大一学生助手
+创建时间：2026-04-10
+
+这个页面显示代码编辑器，用户可以编写和保存代码。
+如果是编辑模式，会预填充现有代码数据。
+-->
+
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2 class="card-title">{{ page_title }}</h2>
+
+    <!-- 操作导航 -->
+    <div style="margin-bottom: 20px;">
+        <a href="{{ url_for('code_list') }}" class="form-btn" style="margin-right: 10px;">← 返回代码列表</a>
+        {% if code %}
+            <a href="{{ url_for('delete_code', code_id=code.id) }}"
+               class="form-btn"
+               style="background-color: #e74c3c;"
+               onclick="return confirm('确定要删除这个代码片段吗？此操作不可撤销！');">
+                删除代码
+            </a>
+        {% endif %}
+    </div>
+
+    <!-- 代码编辑表单 -->
+    <form method="POST" action="{{ url_for('save_code') }}">
+        <!-- 隐藏字段：代码ID（如果是编辑模式） -->
+        {% if code %}
+            <input type="hidden" name="code_id" value="{{ code.id }}">
+        {% endif %}
+
+        <!-- 代码标题输入 -->
+        <div class="form-group">
+            <label class="form-label" for="title">代码标题：</label>
+            <input type="text" id="title" name="title" class="form-input"
+                   placeholder="请输入代码标题（例如：快速排序算法）"
+                   value="{{ code.title if code else '' }}"
+                   required>
+        </div>
+
+        <!-- 编程语言选择 -->
+        <div class="form-group">
+            <label class="form-label" for="language">编程语言：</label>
+            <select id="language" name="language" class="form-input" style="width: 200px;">
+                <option value="python" {% if code and code.language == 'python' %}selected{% endif %}>Python</option>
+                <option value="javascript" {% if code and code.language == 'javascript' %}selected{% endif %}>JavaScript</option>
+                <option value="html" {% if code and code.language == 'html' %}selected{% endif %}>HTML</option>
+                <option value="css" {% if code and code.language == 'css' %}selected{% endif %}>CSS</option>
+                <option value="java" {% if code and code.language == 'java' %}selected{% endif %}>Java</option>
+                <option value="cpp" {% if code and code.language == 'cpp' %}selected{% endif %}>C++</option>
+                <option value="c" {% if code and code.language == 'c' %}selected{% endif %}>C</option>
+                <option value="sql" {% if code and code.language == 'sql' %}selected{% endif %}>SQL</option>
+                <option value="bash" {% if code and code.language == 'bash' %}selected{% endif %}>Bash/Shell</option>
+                <option value="markdown" {% if code and code.language == 'markdown' %}selected{% endif %}>Markdown</option>
+                <option value="other" {% if code and code.language == 'other' %}selected{% endif %}>其他</option>
+            </select>
+        </div>
+
+        <!-- 代码内容编辑器 -->
+        <div class="form-group">
+            <label class="form-label" for="content">代码内容：</label>
+            <div style="margin-bottom: 10px;">
+                <small style="color: #666;">
+                    提示：可以使用Tab键缩进，支持多行代码编辑。
+                    {% if code %}
+                        最后更新：{{ code.updated_at if code.updated_at else code.created_at }}
+                    {% endif %}
+                </small>
+            </div>
+            <textarea id="content" name="content" class="form-input" rows="20"
+                      placeholder="请输入代码内容..." required>{{ code.content if code else '' }}</textarea>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="form-group">
+            <button type="submit" class="form-btn">
+                {% if code %}更新代码{% else %}保存代码{% endif %}
+            </button>
+            <button type="button" class="form-btn format-code-btn ml-10">
+                格式化代码
+            </button>
+            <button type="button" class="form-btn btn-secondary ml-10"
+                    onclick="window.location.href='{{ url_for('code_list') }}'">
+                取消
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- 使用说明 -->
+<div class="card">
+    <h2 class="card-title">使用说明</h2>
+    <div class="card-content">
+        <h3>1. 代码标题</h3>
+        <p>给代码片段起一个描述性的标题，方便以后查找。</p>
+
+        <h3>2. 编程语言</h3>
+        <p>选择代码使用的编程语言，便于分类和管理。</p>
+
+        <h3>3. 代码内容</h3>
+        <p>在文本框中编写代码，支持所有编程语言的语法。</p>
+
+        <h3>4. 保存代码</h3>
+        <p>点击"保存代码"按钮将代码保存到数据库。</p>
+
+        <h3>5. 格式化代码</h3>
+        <p>点击"格式化代码"按钮可以自动调整代码缩进和格式。</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// 页面特定的JavaScript代码
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('代码编辑器页面加载完成');
+
+    // 获取DOM元素
+    const codeTextarea = document.getElementById('content');
+    const formatButton = document.querySelector('.format-code-btn');
+
+    // 格式化代码按钮事件
+    if (formatButton && codeTextarea) {
+        formatButton.addEventListener('click', function() {
+            // 获取当前代码
+            let code = codeTextarea.value;
+
+            // 简单格式化：将制表符替换为4个空格
+            code = code.replace(/\t/g, '    ');
+
+            // 移除行尾的空格
+            code = code.replace(/[ \t]+$/gm, '');
+
+            // 更新文本框内容
+            codeTextarea.value = code;
+
+            // 显示提示
+            alert('代码已简单格式化（制表符已转换为4个空格，行尾空格已移除）');
+        });
+    }
+
+    // 代码编辑器自动调整高度（可选功能）
+    // 监听文本区域的变化，自动调整高度
+    if (codeTextarea) {
+        codeTextarea.addEventListener('input', function() {
+            // 简单的高度调整：根据行数调整高度
+            const lines = codeTextarea.value.split('\n').length;
+            codeTextarea.rows = Math.max(20, Math.min(40, lines + 5));
+        });
+    }
+
+    // 快捷键支持：Ctrl+S保存
+    document.addEventListener('keydown', function(event) {
+        // 检查是否按下了Ctrl+S（Windows）或Cmd+S（Mac）
+        if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+            // 阻止浏览器默认的保存行为
+            event.preventDefault();
+
+            // 触发表单提交
+            const form = document.querySelector('form');
+            if (form) {
+                form.submit();
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,140 @@
+<!--
+仪表板页面：dashboard.html
+功能：用户登录后的主控制面板，显示所有功能入口
+作者：大一学生助手
+创建时间：2026-04-10
+
+这个页面继承base.html模板，显示工具的主要功能入口。
+每个功能入口都是一个卡片，点击可以进入相应功能。
+-->
+
+<!-- 继承基础模板 -->
+{% extends "base.html" %}
+
+<!-- 设置页面标题 -->
+{% block title %}仪表板{% endblock %}
+
+<!-- 页面内容 -->
+{% block content %}
+<!-- 欢迎区域 -->
+<div class="card">
+    <h2 class="card-title">欢迎回来，{{ username }}！</h2>
+    <div class="card-content">
+        <p>这是一个简单的自用小工具，专为初学者设计。</p>
+        <p>所有功能都力求简单易懂，代码有详细注释，方便学习。</p>
+        <p>选择下面的功能开始使用：</p>
+    </div>
+</div>
+
+<!-- 功能入口网格 -->
+<div class="grid">
+    <!-- 代码保存功能 -->
+    <div class="grid-item">
+        <h3>代码保存</h3>
+        <p>保存和管理您的代码片段，支持多种编程语言。</p>
+        <p>功能：代码编辑、分类、搜索、格式化。</p>
+        <a href="{{ url_for('code_editor') }}" class="grid-btn">进入代码编辑器</a>
+    </div>
+
+    <!-- 笔记保存功能 -->
+    <div class="grid-item">
+        <h3>笔记保存</h3>
+        <p>使用Markdown编写和保存笔记，支持实时预览。</p>
+        <p>功能：Markdown编辑、实时预览、分类管理。</p>
+        <a href="{{ url_for('markdown_editor') }}" class="grid-btn">进入笔记编辑器</a>
+    </div>
+
+    <!-- Gitee提交功能 -->
+    <div class="grid-item">
+        <h3>Gitee提交</h3>
+        <p>一键将代码和笔记提交到Gitee仓库。</p>
+        <p>功能：Gitee配置、一键提交、提交历史。</p>
+        <a href="{{ url_for('gitee_page') }}" class="grid-btn">进入Gitee提交</a>
+    </div>
+
+    <!-- 代码格式化功能 -->
+    <div class="grid-item">
+        <h3>代码格式化</h3>
+        <p>格式化您的代码，调整缩进和空格。</p>
+        <p>功能：自动缩进、空格调整、代码美化。</p>
+        <button class="grid-btn format-code-btn">尝试格式化</button>
+    </div>
+
+    <!-- 文件导入导出功能 -->
+    <div class="grid-item">
+        <h3>文件导入导出</h3>
+        <p>从本地文件导入代码/笔记，或导出到本地文件。</p>
+        <p>功能：文件导入、文件导出、格式转换。</p>
+        <div style="margin-top: 10px;">
+            <input type="file" class="import-file-btn" style="display: none;" id="file-input">
+            <button class="grid-btn" onclick="document.getElementById('file-input').click()">导入文件</button>
+            <button class="grid-btn export-file-btn" style="margin-left: 10px;">导出文件</button>
+        </div>
+    </div>
+
+    <!-- 用户设置功能 -->
+    <div class="grid-item">
+        <h3>用户设置</h3>
+        <p>管理您的账户设置和偏好。</p>
+        <p>功能：修改密码、查看使用统计、导出数据。</p>
+        <a href="{{ url_for('settings_page') }}" class="grid-btn">进入设置</a>
+    </div>
+</div>
+
+<!-- 最近活动区域 -->
+<div class="card" style="margin-top: 30px;">
+    <h2 class="card-title">最近活动</h2>
+    <div class="card-content">
+        <p>您还没有任何活动记录。</p>
+        <p>开始使用上面的功能，您的活动将会显示在这里。</p>
+        <ul>
+            <li>保存的代码片段：0</li>
+            <li>保存的笔记：0</li>
+            <li>Gitee提交次数：0</li>
+        </ul>
+    </div>
+</div>
+
+<!-- 使用说明区域 -->
+<div class="card">
+    <h2 class="card-title">使用说明</h2>
+    <div class="card-content">
+        <h3>1. 代码保存功能</h3>
+        <p>点击"代码保存"进入代码编辑器，编写代码并保存。</p>
+
+        <h3>2. 笔记保存功能</h3>
+        <p>点击"笔记保存"进入Markdown编辑器，编写笔记并保存。</p>
+
+        <h3>3. Gitee提交功能</h3>
+        <p>首先在Gitee页面配置您的访问令牌和仓库地址，然后可以一键提交。</p>
+
+        <h3>4. 代码格式化</h3>
+        <p>点击"代码格式化"按钮可以格式化当前代码。</p>
+
+        <h3>5. 文件导入导出</h3>
+        <p>点击"导入文件"选择本地文件导入，点击"导出文件"将内容导出。</p>
+    </div>
+</div>
+{% endblock %}
+
+<!-- 额外的JavaScript -->
+{% block extra_js %}
+<script>
+// 页面特定的JavaScript代码
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('仪表板页面加载完成');
+
+    // 绑定导入文件按钮事件
+    const fileInput = document.getElementById('file-input');
+    if (fileInput) {
+        fileInput.addEventListener('change', importFile);
+    }
+
+    // 绑定导出文件按钮事件
+    const exportBtn = document.querySelector('.export-file-btn');
+    if (exportBtn) {
+        exportBtn.addEventListener('click', exportFile);
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,9 @@
+Flask==3.0.0
+python-dotenv==1.0.0
+requests==2.31.0
+
+# 模块6：代码格式化和文件管理
+black==24.1.1            # Python代码格式化
+jsbeautifier==1.14.9     # JavaScript/HTML/CSS格式化
+sqlparse==0.4.4          # SQL格式化
+python-magic==0.4.27     # 文件类型检测（可选）

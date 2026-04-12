@@ -1,0 +1,90 @@
+<!--
+注册页面：register.html
+功能：用户注册表单
+作者：大一学生助手
+创建时间：2026-04-10
+
+这个页面显示注册表单，新用户输入用户名和密码注册。
+-->
+
+{% extends "base.html" %}
+
+{% block title %}用户注册{% endblock %}
+
+{% block content %}
+<div class="card card-center">
+    <h2 class="card-title">用户注册</h2>
+
+    <!-- 错误提示 -->
+    {% if error %}
+    <div class="message message-error mb-20">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <!-- 注册表单 -->
+    <form method="POST" action="{{ url_for('register') }}">
+        <!-- 用户名输入框 -->
+        <div class="form-group">
+            <label class="form-label" for="username">用户名：</label>
+            <input type="text" id="username" name="username" class="form-input"
+                   placeholder="请输入用户名（3-20个字符）" required minlength="3" maxlength="20" value="{{ username or '' }}">
+            <small style="color: #666;">用户名必须唯一，不能与其他用户重复。</small>
+        </div>
+
+        <!-- 密码输入框 -->
+        <div class="form-group">
+            <label class="form-label" for="password">密码：</label>
+            <input type="password" id="password" name="password" class="form-input"
+                   placeholder="请输入密码（至少6个字符）" required minlength="6">
+            <small style="color: #666;">密码至少6个字符，建议使用字母和数字组合。</small>
+        </div>
+
+        <!-- 确认密码输入框 -->
+        <div class="form-group">
+            <label class="form-label" for="confirm_password">确认密码：</label>
+            <input type="password" id="confirm_password" name="confirm_password" class="form-input"
+                   placeholder="请再次输入密码" required minlength="6">
+        </div>
+
+        <!-- 提交按钮 -->
+        <div class="form-group">
+            <button type="submit" class="form-btn" style="width: 100%;">注册</button>
+        </div>
+
+        <!-- 登录链接 -->
+        <div class="form-group" style="text-align: center;">
+            <p>已有账号？ <a href="{{ url_for('login') }}">立即登录</a></p>
+        </div>
+    </form>
+
+    <!-- 注册说明 -->
+    <div class="mt-20 p-15 bg-gray" style="border-radius: 4px;">
+        <h3>注册说明</h3>
+        <p>1. 用户名和密码将保存在本地数据库中。</p>
+        <p>2. 密码以明文存储，请勿使用重要密码。</p>
+        <p>3. 注册后可以使用所有功能。</p>
+        <p>4. 如需测试，可直接使用默认账号登录。</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// 密码验证
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirm_password');
+
+    form.addEventListener('submit', function(event) {
+        // 检查密码是否一致
+        if (password.value !== confirmPassword.value) {
+            alert('两次输入的密码不一致！');
+            event.preventDefault(); // 阻止表单提交
+            confirmPassword.focus(); // 聚焦到确认密码框
+        }
+    });
+});
+</script>
+{% endblock %}
