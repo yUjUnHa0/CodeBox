@@ -188,7 +188,7 @@ def register():
 
     # 创建新用户
     # 调用database模块的create_user函数
-    success = database.create_user(username, password)
+    success, error_msg = database.create_user(username, password)
 
     if success:
         # 注册成功，自动登录并跳转到仪表板
@@ -203,9 +203,10 @@ def register():
             return redirect(url_for('login'))
     else:
         # 注册失败（可能用户名已存在，虽然我们检查过，但并发情况下可能发生）
+        error_detail = error_msg if error_msg else "未知错误"
         return render_template('register.html',
                              page_title='用户注册',
-                             error='注册失败，请稍后重试！',
+                             error=f'注册失败：{error_detail}',
                              username=username)
 
 # 仪表板路由
@@ -383,11 +384,11 @@ def save_code():
     # 保存或更新代码
     if code_id:
         # 更新现有代码
-        success = database.update_code_snippet(code_id, user_id, title, language, content)
+        success, error_msg = database.update_code_snippet(code_id, user_id, title, language, content)
         action = '更新'
     else:
         # 创建新代码
-        success = database.create_code_snippet(user_id, title, language, content)
+        success, error_msg = database.create_code_snippet(user_id, title, language, content)
         action = '创建'
 
     # 返回结果
@@ -395,8 +396,9 @@ def save_code():
         # 保存成功，重定向到代码列表
         return redirect(url_for('code_list'))
     else:
-        # 保存失败
-        return f"错误：{action}代码失败！", 500
+        # 保存失败，返回详细错误信息
+        error_detail = error_msg if error_msg else "未知错误"
+        return f"错误：{action}代码失败！\n错误详情：{error_detail}", 500
 
 # 删除代码路由
 @app.route('/code/delete/<int:code_id>')
@@ -416,16 +418,17 @@ def delete_code(code_id):
     user_id = session['user_id']
 
     # 删除代码片段
-    success = database.delete_code_snippet(code_id, user_id)
+    success, error_msg = database.delete_code_snippet(code_id, user_id)
 
     if success:
         # 删除成功，重定向到代码列表
         return redirect(url_for('code_list'))
     else:
         # 删除失败
+        error_detail = error_msg if error_msg else "未知错误"
         return render_template('error.html',
                              page_title='错误',
-                             error_message='删除代码失败！代码可能不存在或您无权访问。')
+                             error_message=f'删除代码失败！{error_detail}')
 
 # 搜索代码路由
 @app.route('/code/search')
@@ -553,11 +556,11 @@ def save_document():
     # 保存或更新笔记
     if doc_id:
         # 更新现有笔记
-        success = database.update_document(doc_id, user_id, title, content)
+        success, error_msg = database.update_document(doc_id, user_id, title, content)
         action = '更新'
     else:
         # 创建新笔记
-        success = database.create_document(user_id, title, content)
+        success, error_msg = database.create_document(user_id, title, content)
         action = '创建'
 
     # 返回结果
@@ -565,8 +568,9 @@ def save_document():
         # 保存成功，重定向到笔记列表
         return redirect(url_for('document_list'))
     else:
-        # 保存失败
-        return f"错误：{action}笔记失败！", 500
+        # 保存失败，返回详细错误信息
+        error_detail = error_msg if error_msg else "未知错误"
+        return f"错误：{action}笔记失败！\n错误详情：{error_detail}", 500
 
 # 删除笔记路由
 @app.route('/document/delete/<int:doc_id>')
@@ -586,16 +590,17 @@ def delete_document(doc_id):
     user_id = session['user_id']
 
     # 删除笔记
-    success = database.delete_document(doc_id, user_id)
+    success, error_msg = database.delete_document(doc_id, user_id)
 
     if success:
         # 删除成功，重定向到笔记列表
         return redirect(url_for('document_list'))
     else:
         # 删除失败
+        error_detail = error_msg if error_msg else "未知错误"
         return render_template('error.html',
                              page_title='错误',
-                             error_message='删除笔记失败！笔记可能不存在或您无权访问。')
+                             error_message=f'删除笔记失败！{error_detail}')
 
 # 搜索笔记路由
 @app.route('/document/search')

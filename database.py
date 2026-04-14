@@ -14,7 +14,29 @@ import os
 
 # 数据库文件路径
 # 数据库文件放在data文件夹下，文件名为app.db
-DB_PATH = 'data/app.db'
+# 支持环境变量DATABASE_URL覆盖，适应云端部署环境
+import os
+DB_PATH = os.environ.get('DATABASE_URL', 'data/app.db')
+
+# 如果默认路径不可写，尝试使用/tmp目录（适用于云端无服务器环境）
+if DB_PATH == 'data/app.db':
+    # 检查data目录是否可写，如果不可写则使用/tmp目录
+    try:
+        os.makedirs('data', exist_ok=True)
+        # 尝试创建测试文件检查可写性
+        test_file = 'data/.write_test'
+        with open(test_file, 'w') as f:
+            f.write('test')
+        os.remove(test_file)
+    except (OSError, IOError):
+        # 如果data目录不可写，使用/tmp目录
+        DB_PATH = '/tmp/app.db'
+        print(f"数据目录不可写，使用临时数据库路径：{DB_PATH}")
+        # 确保/tmp目录存在
+        try:
+            os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+        except:
+            pass  # /tmp通常已存在
 
 def init_database():
     """
@@ -23,9 +45,11 @@ def init_database():
     说明：这个函数会在应用第一次运行时自动创建数据库和表
     """
 
-    # 创建data目录（如果不存在）
+    # 创建数据库文件所在目录（如果不存在）
     # os.makedirs函数会创建目录，如果目录已存在也不会报错
-    os.makedirs('data', exist_ok=True)
+    db_dir = os.path.dirname(DB_PATH)
+    if db_dir:  # 如果路径包含目录部分
+        os.makedirs(db_dir, exist_ok=True)
 
     # 连接数据库
     # sqlite3.connect()函数用于连接SQLite数据库
@@ -204,7 +228,7 @@ def create_user(username, password):
     创建新用户函数
     功能：在数据库中创建新用户
     参数：username 用户名, password 密码
-    返回值：如果创建成功返回True，失败返回False
+    返回值：如果创建成功返回(True, None)，失败返回(False, 错误信息)
     """
 
     # 连接数据库
@@ -222,20 +246,20 @@ def create_user(username, password):
 
         # 创建成功
         print(f"用户创建成功：{username}")
-        success = True
+        return (True, None)
     except sqlite3.IntegrityError:
         # 如果用户名已存在，会抛出IntegrityError异常
-        print(f"用户名已存在：{username}")
-        success = False
+        error_msg = f"用户名已存在：{username}"
+        print(error_msg)
+        return (False, error_msg)
     except Exception as e:
         # 其他错误
-        print(f"创建用户失败：{e}")
-        success = False
-
-    # 关闭数据库连接
-    conn.close()
-
-    return success
+        error_msg = f"创建用户失败：{e}"
+        print(error_msg)
+        return (False, error_msg)
+    finally:
+        # 关闭数据库连接
+        conn.close()
 
 def check_username_exists(username):
     """
@@ -323,7 +347,7 @@ def create_code_snippet(user_id, title, language, content):
     创建代码片段函数
     功能：在数据库中创建新的代码片段
     参数：user_id 用户ID, title 代码标题, language 编程语言, content 代码内容
-    返回值：如果创建成功返回True，失败返回False
+    返回值：如果创建成功返回(True, None)，失败返回(False, 错误信息)
     """
 
     # 连接数据库
@@ -343,16 +367,15 @@ def create_code_snippet(user_id, title, language, content):
 
         # 创建成功
         print(f"代码片段创建成功：{title}")
-        success = True
+        return (True, None)
     except Exception as e:
         # 创建失败
-        print(f"创建代码片段失败：{e}")
-        success = False
-
-    # 关闭数据库连接
-    conn.close()
-
-    return success
+        error_msg = f"创建代码片段失败：{e}"
+        print(error_msg)
+        return (False, error_msg)
+    finally:
+        # 关闭数据库连接
+        conn.close()
 
 def get_user_code_snippets(user_id):
     """
@@ -425,7 +448,7 @@ def update_code_snippet(code_id, user_id, title, language, content):
     更新代码片段函数
     功能：更新指定的代码片段
     参数：code_id 代码ID, user_id 用户ID, title 代码标题, language 编程语言, content 代码内容
-    返回值：如果更新成功返回True，失败返回False
+    返回值：如果更新成功返回(True, None)，失败返回(False, 错误信息)
     """
 
     # 连接数据库
@@ -449,26 +472,26 @@ def update_code_snippet(code_id, user_id, title, language, content):
 
         if rows_updated > 0:
             print(f"代码片段更新成功：ID={code_id}")
-            success = True
+            return (True, None)
         else:
-            print(f"代码片段不存在或无权访问：ID={code_id}")
-            success = False
+            error_msg = f"代码片段不存在或无权访问：ID={code_id}"
+            print(error_msg)
+            return (False, error_msg)
     except Exception as e:
         # 更新失败
-        print(f"更新代码片段失败：{e}")
-        success = False
-
-    # 关闭数据库连接
-    conn.close()
-
-    return success
+        error_msg = f"更新代码片段失败：{e}"
+        print(error_msg)
+        return (False, error_msg)
+    finally:
+        # 关闭数据库连接
+        conn.close()
 
 def delete_code_snippet(code_id, user_id):
     """
     删除代码片段函数
     功能：删除指定的代码片段
     参数：code_id 代码ID, user_id 用户ID
-    返回值：如果删除成功返回True，失败返回False
+    返回值：如果删除成功返回(True, None)，失败返回(False, 错误信息)
     """
 
     # 连接数据库
@@ -489,19 +512,19 @@ def delete_code_snippet(code_id, user_id):
 
         if rows_deleted > 0:
             print(f"代码片段删除成功：ID={code_id}")
-            success = True
+            return (True, None)
         else:
-            print(f"代码片段不存在或无权访问：ID={code_id}")
-            success = False
+            error_msg = f"代码片段不存在或无权访问：ID={code_id}"
+            print(error_msg)
+            return (False, error_msg)
     except Exception as e:
         # 删除失败
-        print(f"删除代码片段失败：{e}")
-        success = False
-
-    # 关闭数据库连接
-    conn.close()
-
-    return success
+        error_msg = f"删除代码片段失败：{e}"
+        print(error_msg)
+        return (False, error_msg)
+    finally:
+        # 关闭数据库连接
+        conn.close()
 
 def search_code_snippets(user_id, keyword):
     """
@@ -540,7 +563,7 @@ def create_document(user_id, title, content):
     创建笔记函数
     功能：在数据库中创建新的笔记（Markdown格式）
     参数：user_id 用户ID, title 笔记标题, content 笔记内容（Markdown）
-    返回值：如果创建成功返回True，失败返回False
+    返回值：如果创建成功返回(True, None)，失败返回(False, 错误信息)
     """
 
     # 连接数据库
@@ -560,16 +583,15 @@ def create_document(user_id, title, content):
 
         # 创建成功
         print(f"笔记创建成功：{title}")
-        success = True
+        return (True, None)
     except Exception as e:
         # 创建失败
-        print(f"创建笔记失败：{e}")
-        success = False
-
-    # 关闭数据库连接
-    conn.close()
-
-    return success
+        error_msg = f"创建笔记失败：{e}"
+        print(error_msg)
+        return (False, error_msg)
+    finally:
+        # 关闭数据库连接
+        conn.close()
 
 def get_user_documents(user_id):
     """
@@ -642,7 +664,7 @@ def update_document(doc_id, user_id, title, content):
     更新笔记函数
     功能：更新指定的笔记
     参数：doc_id 笔记ID, user_id 用户ID, title 笔记标题, content 笔记内容
-    返回值：如果更新成功返回True，失败返回False
+    返回值：如果更新成功返回(True, None)，失败返回(False, 错误信息)
     """
 
     # 连接数据库
@@ -666,26 +688,26 @@ def update_document(doc_id, user_id, title, content):
 
         if rows_updated > 0:
             print(f"笔记更新成功：ID={doc_id}")
-            success = True
+            return (True, None)
         else:
-            print(f"笔记不存在或无权访问：ID={doc_id}")
-            success = False
+            error_msg = f"笔记不存在或无权访问：ID={doc_id}"
+            print(error_msg)
+            return (False, error_msg)
     except Exception as e:
         # 更新失败
-        print(f"更新笔记失败：{e}")
-        success = False
-
-    # 关闭数据库连接
-    conn.close()
-
-    return success
+        error_msg = f"更新笔记失败：{e}"
+        print(error_msg)
+        return (False, error_msg)
+    finally:
+        # 关闭数据库连接
+        conn.close()
 
 def delete_document(doc_id, user_id):
     """
     删除笔记函数
     功能：删除指定的笔记
     参数：doc_id 笔记ID, user_id 用户ID
-    返回值：如果删除成功返回True，失败返回False
+    返回值：如果删除成功返回(True, None)，失败返回(False, 错误信息)
     """
 
     # 连接数据库
@@ -706,19 +728,19 @@ def delete_document(doc_id, user_id):
 
         if rows_deleted > 0:
             print(f"笔记删除成功：ID={doc_id}")
-            success = True
+            return (True, None)
         else:
-            print(f"笔记不存在或无权访问：ID={doc_id}")
-            success = False
+            error_msg = f"笔记不存在或无权访问：ID={doc_id}"
+            print(error_msg)
+            return (False, error_msg)
     except Exception as e:
         # 删除失败
-        print(f"删除笔记失败：{e}")
-        success = False
-
-    # 关闭数据库连接
-    conn.close()
-
-    return success
+        error_msg = f"删除笔记失败：{e}"
+        print(error_msg)
+        return (False, error_msg)
+    finally:
+        # 关闭数据库连接
+        conn.close()
 
 def search_documents(user_id, keyword):
     """
