@@ -57,8 +57,35 @@ def initialize_database():
 
     print("数据库初始化完成！")
 
-# 立即初始化数据库（应用启动时执行）
-initialize_database()
+# 数据库初始化状态
+_database_initialized = False
+
+def ensure_database_initialized():
+    """
+    确保数据库已初始化
+    功能：惰性初始化数据库，避免应用启动时阻塞
+    说明：在需要数据库操作前调用此函数
+    """
+    global _database_initialized
+    if not _database_initialized:
+        print("正在初始化数据库...")
+        initialize_database()
+        _database_initialized = True
+
+# 应用启动时立即初始化数据库（注释掉，改为惰性初始化）
+# initialize_database()
+
+# 使用before_request钩子确保数据库在第一次请求前初始化（健康检查除外）
+@app.before_request
+def before_request_handler():
+    """
+    请求前处理函数
+    功能：确保数据库已初始化
+    说明：每个请求前检查数据库是否已初始化，健康检查端点除外
+    """
+    # 排除健康检查端点，让它快速响应
+    if request.path != '/health':
+        ensure_database_initialized()
 
 # 首页路由
 # @app.route('/') 表示这个函数处理根URL（http://localhost:5000/）
@@ -1672,6 +1699,23 @@ def export_user_data():
 @app.route('/health')
 def health_check():
     return {'status': 'healthy', 'timestamp': datetime.now().isoformat()}, 200
+
+# 全局错误处理器
+@app.errorhandler(404)
+def not_found_error(error):
+    return {'error': 'Not Found', 'message': '请求的资源不存在'}, 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    # 记录错误到日志
+    print(f"服务器内部错误: {error}")
+    return {'error': 'Internal Server Error', 'message': '服务器遇到内部错误'}, 500
+
+@app.errorhandler(Exception)
+def handle_exception(error):
+    # 捕获所有未处理的异常
+    print(f"未处理的异常: {error}")
+    return {'error': 'Server Error', 'message': '服务器遇到错误'}, 500
 
 # 应用启动入口
 # 如果直接运行这个文件（而不是作为模块导入），启动Flask开发服务器
