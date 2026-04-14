@@ -7,3 +7,7 @@ black==24.1.1            # Python代码格式化
 jsbeautifier==1.14.9     # JavaScript/HTML/CSS格式化
 sqlparse==0.4.4          # SQL格式化
 python-magic==0.4.27     # 文件类型检测（可选）
+
+# Railway部署依赖
+flask-cors==4.0.0        # CORS跨域支持
+gunicorn==21.2.0         # WSGI生产服务器

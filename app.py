@@ -11,7 +11,9 @@ Flask主应用文件
 
 # 导入Flask模块
 # Flask是Python的轻量级Web框架
-from flask import Flask, render_template, session, redirect, url_for, request
+import os
+from flask import Flask, render_template, session, redirect, url_for, request, jsonify
+from flask_cors import CORS
 # 导入时间处理模块
 from datetime import datetime
 
@@ -34,7 +36,10 @@ app = Flask(__name__)
 # 设置密钥
 # 密钥用于加密session数据，保证会话安全
 # 注意：实际部署时应使用更复杂的密钥
-app.secret_key = 'simple-tool-secret-key-2026'
+app.secret_key = os.environ.get('SECRET_KEY', 'simple-tool-secret-key-2026')
+
+# 配置CORS（允许跨域请求）
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # 初始化数据库
 # 这个函数在应用启动时调用，初始化数据库和创建默认用户
@@ -1658,16 +1663,26 @@ def export_user_data():
             'message': f'数据导出失败：{str(e)}'
         }, 500
 
+# 健康检查端点（Railway需要）
+@app.route('/health')
+def health_check():
+    return {'status': 'healthy', 'timestamp': datetime.now().isoformat()}, 200
+
 # 应用启动入口
 # 如果直接运行这个文件（而不是作为模块导入），启动Flask开发服务器
 if __name__ == '__main__':
+    # 从环境变量读取配置
+    port = int(os.environ.get('PORT', 5000))
+    debug = os.environ.get('DEBUG', 'False').lower() == 'true'
+
     # 打印启动信息
-    print("正在启动简单小工具Web应用...")
-    print("访问地址：http://localhost:5000")
+    print(f"正在启动简单小工具Web应用...")
+    print(f"访问地址：http://0.0.0.0:{port}")
+    print(f"调试模式: {debug}")
     print("按 Ctrl+C 停止服务器")
 
     # 启动Flask开发服务器
-    # debug=True 表示启用调试模式，代码修改后会自动重启
+    # debug根据环境变量设置，代码修改后会自动重启
     # host='0.0.0.0' 表示监听所有网络接口
-    # port=5000 表示使用5000端口
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # port从环境变量读取，Railway等平台会自动设置
+    app.run(debug=debug, host='0.0.0.0', port=port)
